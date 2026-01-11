@@ -29,5 +29,6 @@ To learn more about Next.js, take a look at the following resources:
 
 ## Preview
 
-<img width="1916" height="870" alt="image" src="https://github.com/user-attachments/assets/87337714-0274-41b1-83a2-a9418db0407c" />
+<img width="1918" height="935" alt="image" src="https://github.com/user-attachments/assets/34b1c7e4-e6b6-453e-aef3-4f5e99edb606" />
+
 
