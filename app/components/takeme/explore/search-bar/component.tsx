@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AutoComplete, AutoCompleteCompleteEvent } from "primereact/autocomplete";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -15,6 +15,8 @@ type Props = {
   onChange?: (value: { origin?: LocationOption; destination?: LocationOption }) => void;
   onSearchRoute?: (value: { origin?: LocationOption; destination?: LocationOption }) => void;
   onClear?: () => void;
+  onSelectMap?: () => void;
+  initialLocations?: { origin: LocationOption; destination: LocationOption };
   top?: number;
   left?: number;
   width?: number | string;
@@ -25,6 +27,8 @@ export function FloatingRouteSearch({
   onChange,
   onSearchRoute,
   onClear,
+  onSelectMap,
+  initialLocations,
   top = 16,
   left = 16,
   width = 360,
@@ -40,6 +44,13 @@ export function FloatingRouteSearch({
 
   const [loadingOrigin, setLoadingOrigin] = useState(false);
   const [loadingDest, setLoadingDest] = useState(false);
+
+  useEffect(() => {
+    if (initialLocations) {
+      setOrigin(initialLocations.origin);
+      setDestination(initialLocations.destination);
+    }
+  }, [initialLocations])
 
   const containerStyle = useMemo<React.CSSProperties>(
     () => ({
@@ -167,6 +178,7 @@ export function FloatingRouteSearch({
               type="button"
             />
           </div>
+          <p className="cursor-pointer" onClick={onSelectMap}>Select on map</p>
         </div>
       </Card>
     </div>

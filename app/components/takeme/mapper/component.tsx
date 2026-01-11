@@ -83,9 +83,11 @@ function ClickToDropPin({
   value,
   disabled,
   onSelect,
+  clearNow = false,
   clearPrevious = true,
 }: {
   disabled?: boolean;
+  clearNow?: boolean;
   value?: LatLng;
   onSelect?: (coords: LatLng) => void;
   clearPrevious?: boolean;
@@ -113,6 +115,13 @@ function ClickToDropPin({
     },
   });
 
+  useEffect(() => {
+    if (markerRef.current && clearNow) {
+      markerRef.current.remove();
+      markerRef.current = null;
+    }
+  }, [clearNow]);
+
   return value ? <Marker position={[value.lat, value.lng]} /> : null;
 }
 
@@ -120,16 +129,23 @@ export function RouteMapper({
 
   origin,
   destination,
+  chooseDirection,
+  onChoosedDirection,
 
   initialCenter = { lat: 14.5995, lng: 120.9842 },
   routes,
 }: {
+  chooseDirection?: boolean;
   origin?: LatLng;
   destination?: LatLng;
   initialCenter?: LatLng;
   routes?: Route[];
+  onChoosedDirection?: (origin: LatLng, destination: LatLng) => void;
 }) {
   const [routePoints, setRoutePoints] = useState<RoutePoints[]>([]);
+  const [direction, setDirection] = useState<LatLng[]>([]);
+
+  const [clearChooseDirection, setClearChooseDirection] = useState<boolean>();
 
   // Holds the editable layers for Leaflet Draw
   const featureGroupRef = useRef<L.FeatureGroup | null>(null);
@@ -137,9 +153,15 @@ export function RouteMapper({
   // Load route from DB into state
   useEffect(() => {
     if (routes) {
-      console.log("routes", routes)
       if (routes && routes.length > 0)
         setRoutePoints(routes.map((r: Route) => ({ color: r?.points_color ?? '#782fc2', points: r.points ?? [] })));
+      else {
+        const fg = featureGroupRef.current;
+        if (!fg) return;
+        // remove ALL old polylines
+        fg.clearLayers();
+      }
+
     }
   }, [routes]);
 
@@ -167,6 +189,28 @@ export function RouteMapper({
     }
   }, [routePoints]);
 
+  const onChoosing = (coordinates: LatLng) => {
+    setDirection([...direction, coordinates]);
+  }
+
+  useEffect(() => {
+    if (direction.length !== 2) {
+      setClearChooseDirection(false);
+      return;
+    }
+
+    onChoosedDirection?.(direction[0], direction[1]);
+
+    // trigger clear in child
+    setClearChooseDirection(true);
+
+    // reset direction so user can choose again
+    setDirection([]);
+
+    // optional: turn off clear flag right away (or child can ignore after clearing)
+    // setClearChooseDirection(false);
+  }, [direction, onChoosedDirection]);
+
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <MapContainer
@@ -181,22 +225,25 @@ export function RouteMapper({
         {/* Adds draw + edit tools, and keeps state in sync */}
         <DrawToolbar featureGroupRef={featureGroupRef} />
 
+        {
+          chooseDirection &&
+          <ClickToDropPin
+            clearNow={clearChooseDirection}
+            onSelect={onChoosing}
+          />
+        }
+
+        {/* Drop origin pin */}
         <ClickToDropPin
+          disabled={true}
           value={origin}
-          onSelect={(coords) => {
-            console.log("Clicked coords:", coords);
-            // ✅ save to state / API / form
-          }}
         />
 
+        {/* Drop destination pin */}
         <ClickToDropPin
+          disabled={true}
           value={destination}
-          onSelect={(coords) => {
-            console.log("Clicked coords:", coords);
-            // ✅ save to state / API / form
-          }}
         />
-
 
         {/* Optional: fly to initial center */}
         <FlyToLocation position={initialCenter} />

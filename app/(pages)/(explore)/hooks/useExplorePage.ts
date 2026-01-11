@@ -1,6 +1,7 @@
+import { LocationOption } from "@/app/components/takeme/explore/search-bar/component";
 import RouteService from "@/app/services/RouteService";
 import { LatLng, Route, RouteFares } from "@/app/types/route";
-import { getCurrentLocation } from "@/app/utils/takeme/geolocation";
+import { reverseGeocode, searchLocation } from "@/app/utils";
 import { useState } from "react";
 
 export const useExplorePage = () => {
@@ -8,38 +9,23 @@ export const useExplorePage = () => {
   // Loading State
   const [isRouteFareFetching, setIsRouteFareFetching] = useState<boolean>(false);
 
+  const [chooseOnMap, setOnChooseMap] = useState<boolean>(false);
+
+  // Initial locations
   const [originCoordinates, setOriginCoordinates] = useState<LatLng | undefined>();
   const [destinationCoordinates, setDestinationCoordinates] = useState<LatLng | undefined>();
+  const [initialLocations, setInitialLocations] = useState<{ origin: LocationOption; destination: LocationOption } | undefined>();
 
-  const [currentRouteFareIndex, setCurrentRouteFareIndex] = useState<Number>(0);
+  // Fares
   const [routeFares, setRouteFares] = useState<RouteFares[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
 
-  const searchLocation = async (query: string) => {
-    const url =
-      "https://nominatim.openstreetmap.org/search?format=json&limit=8&q=" +
-      encodeURIComponent(query);
-
-    const res = await fetch(url, {
-      headers: {
-        // Nominatim likes identifying UA; if you have a domain, set a proper one server-side.
-        "Accept": "application/json",
-      },
-    });
-
-    const data = await res.json();
-
-    return data.map((x: any) => ({
-      label: x.display_name,
-      lat: Number(x.lat),
-      lng: Number(x.lon),
-      raw: x,
-    }));
-  }
-
   const searchNearestRoutes = async (origin: LatLng, destination: LatLng) => {
+    // Search possible routes
     try {
+
       setIsRouteFareFetching(true);
+
       const { data } = await RouteService.getNearestRoutes({
         origin_lat: origin.lat,
         origin_lng: origin.lng,
@@ -47,7 +33,7 @@ export const useExplorePage = () => {
         destination_lng: destination.lng,
         radius: 100
       });
- 
+
       const fares: RouteFares[] = data.map(r => ({ total_fare: r.reduce((sum, r) => sum + (r.estimate_fare ?? 0), 0), route_fare: r }));
 
       setRouteFares(fares);
@@ -64,17 +50,52 @@ export const useExplorePage = () => {
     }
   }
 
+  const onSearchRoute = ({ origin, destination }: any) => {
+    const orig = { lat: Number(origin.lat), lng: Number(origin.lng) };
+    const dest = { lat: Number(destination.lat), lng: Number(destination.lng) };
+    setOriginCoordinates(orig);
+    setDestinationCoordinates(dest)
+    searchNearestRoutes(orig, dest);
+  }
+
+  const chooseDirection = async (origin: LatLng, destination: LatLng) => {
+
+    // Reverse direction searching using geolocation or choose on map feature
+    const originGeo = await reverseGeocode(origin.lat, origin.lng);
+    const destGeo = await reverseGeocode(destination.lat, destination.lng);
+
+    onSearchRoute({ origin: originGeo, destination: destGeo });
+    setInitialLocations({ origin: originGeo, destination: destGeo });
+    setOnChooseMap(false);
+  }
+
+  const clearSearch = () => {
+    // Clear searches and routes
+    setOriginCoordinates(undefined);
+    setDestinationCoordinates(undefined);
+    setInitialLocations(undefined);
+    setRouteFares([]);
+    setRoutes([]);
+    setOnChooseMap(false);
+  }
+
   return {
+    clearSearch,
+    onSearchRoute,
     searchLocation,
     searchNearestRoutes,
     setRouteFares,
     setRoutes,
     setDestinationCoordinates,
     setOriginCoordinates,
+    setOnChooseMap,
+    chooseDirection,
+    initialLocations,
     routes,
     routeFares,
     isRouteFareFetching,
     originCoordinates,
     destinationCoordinates,
+    chooseOnMap,
   };
 };
