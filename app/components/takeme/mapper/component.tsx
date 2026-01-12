@@ -40,20 +40,6 @@ function DrawToolbar({ featureGroupRef }: { featureGroupRef: React.RefObject<L.F
     featureGroupRef.current = fg;
     map.addLayer(fg);
 
-    const drawControl = new L.Control.Draw({
-      position: 'topleft',
-      draw: {
-        polygon: false,
-        rectangle: false,
-        circle: false,
-        circlemarker: false,
-        marker: false,
-        polyline: true
-      }
-    });
-
-    map.addControl(drawControl);
-
     const onCreated = (e: any) => {
       const layer = e.layer as L.Layer;
       fg.clearLayers();
@@ -64,8 +50,6 @@ function DrawToolbar({ featureGroupRef }: { featureGroupRef: React.RefObject<L.F
 
     return () => {
       map.off(L.Draw.Event.CREATED, onCreated);
-
-      map.removeControl(drawControl);
       map.removeLayer(fg);
       featureGroupRef.current = null;
     };
@@ -172,7 +156,7 @@ export function RouteMapper({
       if (points.length > 1) {
         const polyline = L.polyline(
           points.map((p) => [p.lat, p.lng] as [number, number]),
-          { color: route.color ?? '#2563eb', weight: 4 }
+          { color: route.color ?? '#2563eb', weight: 6 }
         );
 
         fg.addLayer(polyline);
@@ -204,7 +188,7 @@ export function RouteMapper({
 
   return (
     <div style={{ height: '100vh', width: '100vw' }}>
-      <MapContainer center={[initialCenter.lat, initialCenter.lng]} zoom={13} style={{ height: '100%', width: '100%' }}>
+      <MapContainer center={[initialCenter.lat, initialCenter.lng]} zoom={13} zoomControl={false} style={{ height: '100%', width: '100%' }}>
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" attribution="&copy; OpenStreetMap contributors" />
         {/* Adds draw + edit tools, and keeps state in sync */}
         <DrawToolbar featureGroupRef={featureGroupRef} />

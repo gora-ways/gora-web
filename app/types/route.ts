@@ -10,6 +10,7 @@ export interface RouteFare {
   estimate_distance?: number;
   estimate_fare?: number;
   route: Route;
+  points?: LatLng[];
 }
 
 export interface RouteFares {

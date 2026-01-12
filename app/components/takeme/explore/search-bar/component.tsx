@@ -29,8 +29,8 @@ export function FloatingRouteSearch({
   onClear,
   onSelectMap,
   initialLocations,
-  top = 16,
-  left = 16,
+  top = 25,
+  left = 25,
   width = 360
 }: Props) {
   const [originQuery, setOriginQuery] = useState('');
