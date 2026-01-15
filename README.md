@@ -1,6 +1,6 @@
-# Takemethere
+# GORA
 
-TakeMeThere App is a React-based web application that helps users plan their journeys by providing guided route options and estimated fares. By selecting an origin and a destination, users can view multiple route alternatives, recommended vehicle types for each route, and an estimated cost to help them choose the most efficient and affordable way to travel.
+GORA App is a React-based web application that helps users plan their journeys by providing guided route options and estimated fares. By selecting an origin and a destination, users can view multiple route alternatives, recommended vehicle types for each route, and an estimated cost to help them choose the most efficient and affordable way to travel.
 
 The application focuses on clarity and usability, making route planning simple and accessible whether for daily commuting or unfamiliar destinations.
 

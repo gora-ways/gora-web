@@ -45,7 +45,7 @@ const LoginPage = () => {
       <div className="flex flex-column align-items-center justify-content-center">
         <img
           src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`}
-          alt="Takemethere logo"
+          alt="GORA logo"
           className="mb-5 w-6rem flex-shrink-0"
         />
         <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '10px' }}>

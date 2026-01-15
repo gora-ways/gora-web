@@ -7,8 +7,8 @@ interface DefaultLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: 'Takemethere',
-  description: 'TakeMeThere guides your journey planning web app that provides route options, vehicle recommendations, and fare estimates to help users find the most efficient and affordable travel routes.'
+  title: 'GORA',
+  description: 'GORA guides your journey planning web app that provides route options, vehicle recommendations, and fare estimates to help users find the most efficient and affordable travel routes.'
 };
 
 export default function DefaultLayout({ children }: DefaultLayoutProps) {
