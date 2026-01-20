@@ -16,10 +16,10 @@ export type LocationOption = {
 type Props = {
   searchLocations: (query: string) => Promise<LocationOption[]>;
   onChange?: (value: { origin?: LocationOption; destination?: LocationOption }) => void;
-  onSearchRoute?: (value: { origin?: LocationOption; destination?: LocationOption }) => void;
+  onSearchRoute?: ({ origin, destination }: { origin?: LocationOption; destination?: LocationOption }) => void;
   onClear?: () => void;
-  onSelectMap?: () => void;
-  initialLocations?: { origin: LocationOption; destination: LocationOption };
+  onSelectMap?: (type?: 'destination' | 'origin') => void;
+  initialLocations?: { origin?: LocationOption; destination?: LocationOption };
   top?: number;
   left?: number;
   width?: number | string;
@@ -52,8 +52,8 @@ export function FloatingRouteSearch({
 
   useEffect(() => {
     if (initialLocations) {
-      setOrigin(initialLocations.origin);
-      setDestination(initialLocations.destination);
+      if (initialLocations.origin) setOrigin(initialLocations.origin);
+      if (initialLocations.destination) setDestination(initialLocations.destination);
     }
   }, [initialLocations]);
 
@@ -136,60 +136,84 @@ export function FloatingRouteSearch({
 
       {isSearchBoxVisible && (
         <Card className="search-box" style={{ borderRadius: 12 }}>
+          <h5>
+            <i className="pi pi-directions" /> Find Your Way
+          </h5>
           <div className="flex flex-column gap-2">
             <div className="flex flex-column gap-1">
-              <label className="origin-label">I am here</label>
-              <AutoComplete
-                value={origin ?? originQuery}
-                suggestions={originSuggestions}
-                completeMethod={completeOrigin}
-                field="label"
-                dropdown={false}
-                forceSelection
-                placeholder="Search origin location..."
-                onChange={(e) => {
-                  // typing
-                  if (typeof e.value === 'string') setOriginQuery(e.value);
-                }}
-                onSelect={(e) => {
-                  const selected = e.value as LocationOption;
-                  setOrigin(selected);
-                  setOriginQuery(selected.label);
-                  emitChange(selected, destination);
-                }}
-                className="w-full"
-                inputClassName="w-full"
-              />
+              <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-map-marker text-red-700"></i>
+                </span>
+
+                <AutoComplete
+                  value={origin ?? originQuery}
+                  suggestions={originSuggestions}
+                  completeMethod={completeOrigin}
+                  field="label"
+                  dropdown={false}
+                  forceSelection
+                  placeholder="I am here..."
+                  onChange={(e) => {
+                    // typing
+                    if (typeof e.value === 'string') setOriginQuery(e.value);
+                  }}
+                  onSelect={(e) => {
+                    const selected = e.value as LocationOption;
+                    setOrigin(selected);
+                    setOriginQuery(selected.label);
+                    emitChange(selected, destination);
+                  }}
+                  onClick={() => onSelectMap?.('origin')}
+                  className="w-full"
+                  inputClassName="w-full"
+                />
+              </div>
             </div>
 
             <div className="flex flex-column gap-1">
-              <label className="destination-label">Take me there</label>
-              <AutoComplete
-                value={destination ?? destQuery}
-                suggestions={destSuggestions}
-                completeMethod={completeDestination}
-                field="label"
-                dropdown={false}
-                forceSelection
-                placeholder="Search destination location..."
-                onChange={(e) => {
-                  if (typeof e.value === 'string') setDestQuery(e.value);
-                }}
-                onSelect={(e) => {
-                  const selected = e.value as LocationOption;
-                  setDestination(selected);
-                  setDestQuery(selected.label);
-                  emitChange(origin, selected);
-                }}
-                className="w-full"
-                inputClassName="w-full"
-              />
+              <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-map-marker text-blue-700"></i>
+                </span>
+                <AutoComplete
+                  value={destination ?? destQuery}
+                  suggestions={destSuggestions}
+                  completeMethod={completeDestination}
+                  onClick={() => onSelectMap?.('destination')}
+                  field="label"
+                  dropdown={false}
+                  forceSelection
+                  placeholder="Take me there..."
+                  onChange={(e) => {
+                    if (typeof e.value === 'string') setDestQuery(e.value);
+                  }}
+                  onSelect={(e) => {
+                    const selected = e.value as LocationOption;
+                    setDestination(selected);
+                    setDestQuery(selected.label);
+                    emitChange(origin, selected);
+                  }}
+                  className="w-full"
+                  inputClassName="w-full"
+                />
+              </div>
             </div>
-
             <div className="flex gap-2 justify-content-end pt-1">
-              <Button label="Clear" size="small" rounded icon="pi pi-times" severity="warning" outlined onClick={clearAll} type="button" />
               <Button
-                label="Route"
+                label="Clear"
+                size="small"
+                rounded
+                icon="pi pi-times"
+                severity="warning"
+                title="Clear Search"
+                outlined
+                onClick={clearAll}
+                type="button"
+              />
+              <Button
+                label="GORA"
+                title="Find Routes"
                 size="small"
                 icon="pi pi-directions"
                 disabled={!canSearch}
@@ -199,9 +223,6 @@ export function FloatingRouteSearch({
                 rounded
               />
             </div>
-            <p className="cursor-pointer" onClick={onSelectMap}>
-              Select on map
-            </p>
           </div>
         </Card>
       )}

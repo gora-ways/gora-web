@@ -33,7 +33,7 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
 
   return (
     <div className="suggested-routes" style={containerStyle}>
-      <Card className="suggestion-box" style={{ borderRadius: 12 }}>
+      <div className="suggestion-box">
         <Accordion activeIndex={activeIndex} onTabChange={onTabChange}>
           {route_fares.map((r, i) => (
             <AccordionTab
@@ -41,7 +41,7 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
               headerTemplate={
                 <div className="flex align-items-center gap-2">
                   <span className="pi pi-directions"></span>
-                  <span>{`Route ${i + 1}`}</span>
+                  <span>{`Route ${i + 1} - ₱${r.total_fare}`}</span>
                 </div>
               }
             >
@@ -63,7 +63,7 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
             </AccordionTab>
           ))}
         </Accordion>
-      </Card>
+      </div>
       <small>
         Disclaimer: The fare information provided is for estimation purposes only and does not represent final or guaranteed pricing. Actual fares may
         vary due to traffic conditions, route adjustments, availability of transport, and local fare regulations.

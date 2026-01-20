@@ -45,7 +45,7 @@ const HomePage = () => {
         initialLocations={initialLocations}
         onClear={clearSearch}
         onSearchRoute={onSearchRoute}
-        onSelectMap={() => setOnChooseMap(true)}
+        onSelectMap={(type) => setOnChooseMap(type)}
         searchLocations={searchLocation}
       />
 

@@ -3,23 +3,18 @@
 .suggested-routes {
   .suggestion-box {
     margin: 1rem;
-    background-color: rgba(0, 0, 0, 0.08);
-    box-shadow:
-      0 4px 6px rgba(0, 0, 0, 0.08),
-      0 10px 20px rgba(0, 0, 0, 0.06);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
-
+    
     &:hover {
-      background-color: rgba(0, 0, 0, 0.486);
       transform: translateY(-2px);
     }
 
     .route-leg {
-  display: grid;
-  grid-template-columns: 14px 1fr auto;
-  gap: 12px;
-  align-items: center;
-}
+      display: grid;
+      grid-template-columns: 14px 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
 
     .route-dot {
       width: 10px;

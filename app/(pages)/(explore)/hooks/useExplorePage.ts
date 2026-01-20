@@ -2,18 +2,18 @@ import { LocationOption } from '@/app/components/takeme/explore/search-bar/compo
 import RouteService from '@/app/services/RouteService';
 import { LatLng, Route, RouteFares } from '@/app/types/route';
 import { reverseGeocode, searchLocation } from '@/app/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useExplorePage = () => {
   // Loading State
   const [isRouteFareFetching, setIsRouteFareFetching] = useState<boolean>(false);
 
-  const [chooseOnMap, setOnChooseMap] = useState<boolean>(false);
+  const [chooseOnMap, setOnChooseMap] = useState<'origin' | 'destination' | undefined>(undefined);
 
   // Initial locations
   const [originCoordinates, setOriginCoordinates] = useState<LatLng | undefined>();
   const [destinationCoordinates, setDestinationCoordinates] = useState<LatLng | undefined>();
-  const [initialLocations, setInitialLocations] = useState<{ origin: LocationOption; destination: LocationOption } | undefined>();
+  const [initialLocations, setInitialLocations] = useState<{ origin?: LocationOption; destination?: LocationOption } | undefined>();
 
   // Fares
   const [routeFares, setRouteFares] = useState<RouteFares[]>([]);
@@ -48,22 +48,27 @@ export const useExplorePage = () => {
     }
   };
 
-  const onSearchRoute = ({ origin, destination }: any) => {
+  const onSearchRoute = ({ origin, destination }: { origin?: LocationOption; destination?: LocationOption }) => {
+    if (!origin || !destination) return;
+
     const orig = { lat: Number(origin.lat), lng: Number(origin.lng) };
     const dest = { lat: Number(destination.lat), lng: Number(destination.lng) };
-    setOriginCoordinates(orig);
-    setDestinationCoordinates(dest);
+
     searchNearestRoutes(orig, dest);
   };
 
-  const chooseDirection = async (origin: LatLng, destination: LatLng) => {
-    // Reverse direction searching using geolocation or choose on map feature
-    const originGeo = await reverseGeocode(origin.lat, origin.lng);
-    const destGeo = await reverseGeocode(destination.lat, destination.lng);
+  const chooseDirection = async ({ type, coordinates }: { type: 'origin' | 'destination'; coordinates: LatLng }) => {
+    if (type == 'origin') {
+      setOriginCoordinates(coordinates);
+      const originGeo = await reverseGeocode(coordinates.lat, coordinates.lng);
+      setInitialLocations({ ...initialLocations, origin: originGeo });
+    } else if (type == 'destination') {
+      setDestinationCoordinates(coordinates);
+      const destGeo = await reverseGeocode(coordinates.lat, coordinates.lng);
+      setInitialLocations({ ...initialLocations, destination: destGeo });
+    }
 
-    onSearchRoute({ origin: originGeo, destination: destGeo });
-    setInitialLocations({ origin: originGeo, destination: destGeo });
-    setOnChooseMap(false);
+    setOnChooseMap(undefined);
   };
 
   const clearSearch = () => {
@@ -73,8 +78,13 @@ export const useExplorePage = () => {
     setInitialLocations(undefined);
     setRouteFares([]);
     setRoutes([]);
-    setOnChooseMap(false);
+    setOnChooseMap(undefined);
   };
+
+  useEffect(() => {
+    if (initialLocations && initialLocations.destination && initialLocations.origin)
+      onSearchRoute({ origin: initialLocations.origin, destination: initialLocations.destination });
+  }, [initialLocations]);
 
   return {
     clearSearch,
