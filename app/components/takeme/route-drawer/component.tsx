@@ -36,6 +36,7 @@ function DrawToolbar({
     featureGroupRef.current = fg;
     map.addLayer(fg);
 
+    // @ts-ignore
     const drawControl = new L.Control.Draw({
       position: 'topleft',
       draw: {
@@ -77,13 +78,19 @@ function DrawToolbar({
       onRouteChange([]);
     };
 
+    // @ts-ignore
     map.on(L.Draw.Event.CREATED, onCreated);
+    // @ts-ignore
     map.on(L.Draw.Event.EDITED, onEdited);
+    // @ts-ignore
     map.on(L.Draw.Event.DELETED, onDeleted);
 
     return () => {
+      // @ts-ignore
       map.off(L.Draw.Event.CREATED, onCreated);
+      // @ts-ignore
       map.off(L.Draw.Event.EDITED, onEdited);
+      // @ts-ignore
       map.off(L.Draw.Event.DELETED, onDeleted);
 
       map.removeControl(drawControl);

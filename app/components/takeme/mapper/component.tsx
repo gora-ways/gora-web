@@ -46,9 +46,11 @@ function DrawToolbar({ featureGroupRef }: { featureGroupRef: React.RefObject<L.F
       fg.addLayer(layer);
     };
 
+    // @ts-ignore
     map.on(L.Draw.Event.CREATED, onCreated);
 
     return () => {
+      // @ts-ignore
       map.off(L.Draw.Event.CREATED, onCreated);
       map.removeLayer(fg);
       featureGroupRef.current = null;

@@ -11,7 +11,7 @@ interface ProfileMenuProps {
 }
 
 const ProfileMenu = ({ items }: ProfileMenuProps) => {
-  const menu = useRef(null);
+  const menu = useRef<any>(null);
 
   const { user } = useAuth(); // Get user from auth context
 

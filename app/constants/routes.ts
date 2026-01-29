@@ -71,4 +71,4 @@ export const ROUTES = {
   }
 };
 
-export const PUBLIC_ROUTES = ['/login', '/kiosk'];
+export const PUBLIC_ROUTES = ['/', '/login', '/kiosk'];
