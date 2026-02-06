@@ -22,7 +22,7 @@ function FlyToLocation({ position }: { position?: { lat: number; lng: number } }
 
   useEffect(() => {
     if (position) {
-      map.flyTo([position.lat, position.lng], 15, {
+      map.flyTo([position.lat, position.lng], 13.5, {
         animate: true,
         duration: 1.2
       });
@@ -157,14 +157,15 @@ export function RouteMapper({
   destination,
   chooseDirection,
   onChoosedDirection,
-
   initialCenter = { lat: 14.5995, lng: 120.9842 },
+  disableInitialCenterPinning = false,
   routes
 }: {
   chooseDirection?: 'origin' | 'destination' | undefined;
   origin?: LatLng;
   destination?: LatLng;
   initialCenter?: LatLng;
+  disableInitialCenterPinning?: boolean;
   routes?: Route[];
   onChoosedDirection?: ({ type, coordinates }: { type: 'origin' | 'destination'; coordinates: LatLng }) => void;
 }) {
@@ -255,7 +256,7 @@ export function RouteMapper({
         <ClickToDropPin tooltip="Destination" icon="blue" disabled={true} value={destination} />
 
         {/* Drop current location pin */}
-        <ClickToDropPin tooltip="Current Location" icon="circle-blue" disabled={true} value={initialCenter} />
+        {!disableInitialCenterPinning && <ClickToDropPin tooltip="Current Location" icon="circle-blue" disabled={true} value={initialCenter} />}
 
         {/* Optional: fly to initial center */}
         <FlyToLocation position={initialCenter} />

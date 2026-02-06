@@ -4,7 +4,7 @@
   .suggestion-box {
     margin: 1rem;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-2px);
     }
@@ -23,5 +23,16 @@
       background-color: var(--route-color, #3b82f6);
       flex-shrink: 0;
     }
+
+    .p-accordion .p-accordion-header:not(.p-disabled).p-highlight .p-accordion-header-link {
+      background-color: vars.$blue;
+      color: white;
+      border-color: vars.$blue;
+    }
+
+    .p-accordion .p-accordion-header a {
+      color: vars.$black-7;
+    }
+
   }
 }

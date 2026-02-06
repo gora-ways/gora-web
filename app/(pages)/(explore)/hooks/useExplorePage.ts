@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 export const useExplorePage = () => {
   // Loading State
   const [isRouteFareFetching, setIsRouteFareFetching] = useState<boolean>(false);
+  const [hideSearchBar, setHideSearchBar] = useState<boolean | undefined>();
 
   const [chooseOnMap, setOnChooseMap] = useState<'origin' | 'destination' | undefined>(undefined);
 
@@ -58,6 +59,7 @@ export const useExplorePage = () => {
   };
 
   const chooseDirection = async ({ type, coordinates }: { type: 'origin' | 'destination'; coordinates: LatLng }) => {
+    setHideSearchBar(false);
     if (type == 'origin') {
       setOriginCoordinates(coordinates);
       const originGeo = await reverseGeocode(coordinates.lat, coordinates.lng);
@@ -87,22 +89,24 @@ export const useExplorePage = () => {
   }, [initialLocations]);
 
   return {
+    chooseDirection,
     clearSearch,
     onSearchRoute,
     searchLocation,
     searchNearestRoutes,
+    setDestinationCoordinates,
+    setHideSearchBar,
+    setOnChooseMap,
+    setOriginCoordinates,
     setRouteFares,
     setRoutes,
-    setDestinationCoordinates,
-    setOriginCoordinates,
-    setOnChooseMap,
-    chooseDirection,
+    chooseOnMap,
+    destinationCoordinates,
+    hideSearchBar,
     initialLocations,
-    routes,
-    routeFares,
     isRouteFareFetching,
     originCoordinates,
-    destinationCoordinates,
-    chooseOnMap
+    routeFares,
+    routes
   };
 };

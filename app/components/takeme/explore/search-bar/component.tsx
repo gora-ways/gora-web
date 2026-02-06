@@ -23,6 +23,7 @@ type Props = {
   top?: number;
   left?: number;
   width?: number | string;
+  hideSearchBar?: boolean;
 };
 
 export function FloatingRouteSearch({
@@ -34,7 +35,8 @@ export function FloatingRouteSearch({
   initialLocations,
   top = 25,
   left = 25,
-  width = 360
+  width = 360,
+  hideSearchBar
 }: Props) {
   const [originQuery, setOriginQuery] = useState('');
   const [destQuery, setDestQuery] = useState('');
@@ -56,6 +58,10 @@ export function FloatingRouteSearch({
       if (initialLocations.destination) setDestination(initialLocations.destination);
     }
   }, [initialLocations]);
+
+  useEffect(() => {
+    if (hideSearchBar != undefined) setIsSearchBoxVisible(!hideSearchBar);
+  }, [hideSearchBar]);
 
   const containerStyle = useMemo<React.CSSProperties>(
     () => ({
