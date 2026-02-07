@@ -1,6 +1,16 @@
 @use '../../../../../styles/layout/_variables.scss' as vars;
 
 .suggested-routes {
+  background: vars.$white;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  z-index: 1000;
+  height: 100vh;
+
+  box-shadow: 0px 0 3px vars.$blue;
+
   .suggestion-box {
     margin: 1rem;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -25,7 +35,7 @@
     }
 
     .p-accordion .p-accordion-header:not(.p-disabled).p-highlight .p-accordion-header-link {
-      background-color: vars.$blue;
+      background: vars.$blue;
       color: white;
       border-color: vars.$blue;
     }
@@ -36,17 +46,20 @@
   }
 
   &.mobile {
+    box-shadow: unset !important;
     top: unset !important;
     right: unset !important;
     width: 100% !important;
     margin: 0;
     bottom: 0;
+    height: unset !important;
+    background: unset;
   }
 
   .btn-direction {
     max-width: 160px;
   }
-  
+
   .btn-direction .p-button-label {
     overflow: hidden;
     text-overflow: ellipsis;

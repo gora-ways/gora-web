@@ -10,6 +10,7 @@ export const useExplorePage = () => {
   const [hideSearchBar, setHideSearchBar] = useState<boolean | undefined>();
 
   const [chooseOnMap, setOnChooseMap] = useState<'origin' | 'destination' | undefined>(undefined);
+  const [zoomTo, setZoomTo] = useState<'origin' | 'destination' | undefined>(undefined);
 
   // Initial locations
   const [originCoordinates, setOriginCoordinates] = useState<LatLng | undefined>();
@@ -107,6 +108,8 @@ export const useExplorePage = () => {
     setOriginCoordinates,
     setRouteFares,
     setRoutes,
+    setZoomTo,
+    zoomTo,
     chooseOnMap,
     destinationCoordinates,
     hideSearchBar,

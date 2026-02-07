@@ -72,7 +72,7 @@ export function FloatingRouteSearch({
       top,
       left,
       width,
-      zIndex: 1000 // make sure it's above the map
+      zIndex: 2000 // make sure it's above the map
     }),
     [top, left, width]
   );

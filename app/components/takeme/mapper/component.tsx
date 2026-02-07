@@ -159,9 +159,11 @@ export function RouteMapper({
   onChoosedDirection,
   initialCenter = { lat: 14.5995, lng: 120.9842 },
   disableInitialCenterPinning = false,
-  routes
+  routes,
+  flyTo
 }: {
   chooseDirection?: 'origin' | 'destination' | undefined;
+  flyTo?: 'origin' | 'destination' | undefined;
   origin?: LatLng;
   destination?: LatLng;
   initialCenter?: LatLng;
@@ -173,6 +175,9 @@ export function RouteMapper({
   const [direction, setDirection] = useState<LatLng | undefined>();
 
   const [clearChooseDirection, setClearChooseDirection] = useState<boolean>();
+
+  // Flying to coordinates
+  const [flyingToCoor, setFlyingToCoor] = useState<LatLng | undefined>();
 
   // Holds the editable layers for Leaflet Draw
   const featureGroupRef = useRef<L.FeatureGroup | null>(null);
@@ -189,6 +194,16 @@ export function RouteMapper({
       }
     }
   }, [routes]);
+
+  useEffect(() => {
+    if (!flyTo) setFlyingToCoor(undefined);
+    else if (flyTo == 'destination') setFlyingToCoor(destination);
+    else if (flyTo == 'origin') setFlyingToCoor(origin);
+  }, [flyTo]);
+
+  useEffect(() => {
+    if (initialCenter) setFlyingToCoor(initialCenter);
+  }, [initialCenter]);
 
   // Sync React state -> Leaflet editable layer (so loaded routes become editable)
   useEffect(() => {
@@ -259,7 +274,7 @@ export function RouteMapper({
         {!disableInitialCenterPinning && <ClickToDropPin tooltip="Current Location" icon="circle-blue" disabled={true} value={initialCenter} />}
 
         {/* Optional: fly to initial center */}
-        <FlyToLocation position={initialCenter} />
+        <FlyToLocation position={flyingToCoor} />
       </MapContainer>
     </div>
   );

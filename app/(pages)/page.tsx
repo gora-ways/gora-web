@@ -24,7 +24,9 @@ const HomePage = () => {
     routes,
     hideSearchBar,
     noRoutesFound,
+    zoomTo,
 
+    setZoomTo,
     chooseDirection,
     clearSearch,
     onSearchRoute,
@@ -75,6 +77,7 @@ const HomePage = () => {
           onChoosedDirection={chooseDirection}
           origin={originCoordinates}
           routes={routes}
+          flyTo={zoomTo}
           disableInitialCenterPinning={true} // @NOTE: ONLY FOR BETA
         />
 
@@ -92,6 +95,7 @@ const HomePage = () => {
 
         {routeFares.length != 0 && (
           <FloatingRouteList
+            onDirectionClick={(direction) => setZoomTo(direction)}
             locations={initialLocations}
             onRouteClick={(routeFare) => setRoutes(routeFare.route_fare.map((r) => r.route))}
             route_fares={routeFares}

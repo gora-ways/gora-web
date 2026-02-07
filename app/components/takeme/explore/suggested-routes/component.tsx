@@ -3,46 +3,39 @@ import { RouteFares } from '@/app/types/route';
 import { Accordion, AccordionTab, AccordionTabChangeEvent } from 'primereact/accordion';
 import './component.scss';
 import { useMediaQuery } from '@/app/hooks/useMediaQuery';
-import { Card } from 'primereact/card';
 import { LocationOption } from '../search-bar/component';
 import { Button } from 'primereact/button';
-import { ButtonGroup } from 'primereact/buttongroup';
 
 type Props = {
   route_fares: RouteFares[];
-  top?: number;
-  right?: number;
-  width?: number | string;
   locations?: { origin?: LocationOption; destination?: LocationOption };
   onRouteClick?: (route_fare: RouteFares) => void;
+  onDirectionClick?: (direction: 'destination' | 'origin') => void;
 };
 
-export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right = 16, width = 360, locations }: Props) {
+export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick, locations }: Props) {
   const isMobile = useMediaQuery();
 
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-  const containerStyle = useMemo<React.CSSProperties>(
-    () => ({
-      position: 'absolute',
-      top,
-      right,
-      width,
-      zIndex: 1000
-    }),
-    [top, right, width]
-  );
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   const onTabChange = (event: AccordionTabChangeEvent) => {
-    const routeFare = route_fares[Number(event.index)];
-    setActiveIndex(Number(event.index));
-    if (onRouteClick) onRouteClick(routeFare);
+    if (event.index != null) {
+      const routeFare = route_fares[Number(event.index)];
+      setActiveIndex(Number(event.index));
+      if (onRouteClick) onRouteClick(routeFare);
+    } else {
+      setActiveIndex(null);
+    }
   };
 
   return (
-    <div className={`suggested-routes ${isMobile ? 'mobile' : ''}`} style={containerStyle}>
+    <div className={`suggested-routes ${isMobile ? 'mobile' : ''}`}>
       <div className={`suggestion-box`}>
+        <p className="m-0">
+          <i className="pi pi pi-directions text-blue-600"></i> <small> Direction:</small>
+        </p>
         {locations && (
-          <div className="w-full">
+          <div className="w-full mb-3">
             <div className="flex gap-2 m-2">
               <Button
                 label={locations.origin?.label}
@@ -52,6 +45,7 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
                 severity="danger"
                 className="btn-direction"
                 icon="pi pi-directions"
+                onClick={() => onDirectionClick && onDirectionClick('origin')}
               />
               <Button
                 label={locations.destination?.label}
@@ -59,11 +53,16 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
                 outlined
                 rounded
                 className="btn-primary btn-direction"
-                icon="pi pi-map-marker"
+                icon="pi pi-directions-alt"
+                onClick={() => onDirectionClick && onDirectionClick('destination')}
               />
             </div>
           </div>
         )}
+
+        <p className="m-0 mb-2">
+          <i className="pi pi-star-fill text-yellow-600"></i> <small>Suggested Routes:</small>
+        </p>
 
         <Accordion activeIndex={activeIndex} onTabChange={onTabChange}>
           {route_fares.map((r, i) => (
@@ -119,7 +118,7 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
         </Accordion>
       </div>
       {!isMobile && (
-        <small>
+        <small className="p-3" style={{ position: 'fixed', bottom: 0 }}>
           Disclaimer: The fare information provided is for estimation purposes only and does not represent final or guaranteed pricing. Actual fares
           may vary due to traffic conditions, route adjustments, availability of transport, and local fare regulations.
         </small>
