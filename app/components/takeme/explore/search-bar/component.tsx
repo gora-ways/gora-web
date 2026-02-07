@@ -3,6 +3,7 @@ import { AutoComplete, AutoCompleteCompleteEvent } from 'primereact/autocomplete
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import AppLogoIcon from '@/app/components/icons/AppLogoIcon';
+import { useMediaQuery } from '@/app/hooks/useMediaQuery';
 
 import './component.scss';
 
@@ -48,6 +49,8 @@ export function FloatingRouteSearch({
 
   const [originSuggestions, setOriginSuggestions] = useState<LocationOption[]>([]);
   const [destSuggestions, setDestSuggestions] = useState<LocationOption[]>([]);
+
+  const isMobile = useMediaQuery();
 
   const [loadingOrigin, setLoadingOrigin] = useState(false);
   const [loadingDest, setLoadingDest] = useState(false);
@@ -129,15 +132,17 @@ export function FloatingRouteSearch({
             <span className="app-tag-line">Commute Smarter</span>
           </div>
         </div>
-        <Button
-          className="btn-blue"
-          icon="pi pi-search"
-          rounded
-          outlined
-          severity="info"
-          aria-label="User"
-          onClick={() => setIsSearchBoxVisible(!isSearchBoxVisible)}
-        />
+        <div className={isMobile ? 'ml-auto mr-3' : 'ml-2'}>
+          <Button
+            className="btn-blue"
+            icon="pi pi-search"
+            rounded
+            outlined
+            severity="info"
+            aria-label="User"
+            onClick={() => setIsSearchBoxVisible(!isSearchBoxVisible)}
+          />
+        </div>
       </div>
 
       {isSearchBoxVisible && (

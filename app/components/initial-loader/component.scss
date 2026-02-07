@@ -1,0 +1,108 @@
+@use '../../../styles/layout/_variables.scss' as vars;
+
+
+
+.screen-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(10, 35, 80, 0.95);
+
+  /* fade setup */
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.02);
+
+  transition:
+    opacity 400ms ease,
+    visibility 400ms ease,
+    transform 400ms ease;
+}
+
+
+.screen-loader.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.screen-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.02);
+}
+
+
+.screen-loader .app {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  width: min(420px, 92vw);
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.screen-loader .app-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin: 0 auto 0.75rem;
+}
+
+.screen-loader .fallback-icon {
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #e6f0ff;
+  color: #0a2350;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.screen-loader .app-name h6 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #0a2350;
+}
+
+.screen-loader .app-tag-line {
+  margin-top: 0.25rem;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.screen-loader .loader-row {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.screen-loader .actions {
+  margin-top: 1rem;
+}
+
+
+
+
+
+/* Optional: subtle fade on the card itself */
+.screen-loader .app {
+  animation: appFadeIn 450ms ease forwards;
+}
+
+@keyframes appFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

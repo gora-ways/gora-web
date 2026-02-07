@@ -33,6 +33,13 @@
     .p-accordion .p-accordion-header a {
       color: vars.$black-7;
     }
+  }
 
+  &.mobile {
+    top: unset !important;
+    right: unset !important;
+    width: 100% !important;
+    margin: 0;
+    bottom: 0;
   }
 }

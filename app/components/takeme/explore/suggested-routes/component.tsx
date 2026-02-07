@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { Card } from 'primereact/card';
 import { RouteFares } from '@/app/types/route';
 import { Accordion, AccordionTab, AccordionTabChangeEvent } from 'primereact/accordion';
 import './component.scss';
+import { useMediaQuery } from '@/app/hooks/useMediaQuery';
 
 type Props = {
   route_fares: RouteFares[];
@@ -13,6 +13,8 @@ type Props = {
 };
 
 export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right = 16, width = 360 }: Props) {
+  const isMobile = useMediaQuery();
+
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const containerStyle = useMemo<React.CSSProperties>(
     () => ({
@@ -32,8 +34,8 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
   };
 
   return (
-    <div className="suggested-routes" style={containerStyle}>
-      <div className="suggestion-box">
+    <div className={`suggested-routes ${isMobile ? 'mobile' : ''}`} style={containerStyle}>
+      <div className={`suggestion-box`}>
         <Accordion activeIndex={activeIndex} onTabChange={onTabChange}>
           {route_fares.map((r, i) => (
             <AccordionTab
@@ -64,10 +66,12 @@ export function FloatingRouteList({ route_fares, onRouteClick, top = 16, right =
           ))}
         </Accordion>
       </div>
-      <small>
-        Disclaimer: The fare information provided is for estimation purposes only and does not represent final or guaranteed pricing. Actual fares may
-        vary due to traffic conditions, route adjustments, availability of transport, and local fare regulations.
-      </small>
+      {!isMobile && (
+        <small>
+          Disclaimer: The fare information provided is for estimation purposes only and does not represent final or guaranteed pricing. Actual fares
+          may vary due to traffic conditions, route adjustments, availability of transport, and local fare regulations.
+        </small>
+      )}
     </div>
   );
 }
