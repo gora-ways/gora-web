@@ -42,6 +42,8 @@ export const useExplorePage = () => {
         const fare = fares[0];
         setRoutes(fare.route_fare.map((r) => r.route));
       }
+
+      setHideSearchBar(true);
     } catch (error) {
       throw error;
     } finally {

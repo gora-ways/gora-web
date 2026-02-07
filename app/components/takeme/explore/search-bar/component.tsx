@@ -132,12 +132,12 @@ export function FloatingRouteSearch({
             <span className="app-tag-line">Commute Smarter</span>
           </div>
         </div>
-        <div className={isMobile ? 'ml-auto mr-3' : 'ml-2'}>
+        <div className={isMobile ? 'ml-auto mr-2' : ''}>
           <Button
             className="btn-blue"
             icon="pi pi-search"
             rounded
-            outlined
+            label="Guide Me"
             severity="info"
             aria-label="User"
             onClick={() => setIsSearchBoxVisible(!isSearchBoxVisible)}
@@ -148,80 +148,59 @@ export function FloatingRouteSearch({
       {isSearchBoxVisible && (
         <Card className="search-box" style={{ borderRadius: 12 }}>
           <h5>
-            <i className="pi pi-directions" /> Find Your Way
+            <i className="pi pi-directions" /> Find My Way
           </h5>
           <div className="flex flex-column gap-2">
             <div className="flex flex-column gap-1">
-              <div className="p-inputgroup flex-1">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-map-marker text-red-700"></i>
-                </span>
-
-                <AutoComplete
-                  value={origin ?? originQuery}
-                  suggestions={originSuggestions}
-                  completeMethod={completeOrigin}
-                  field="label"
-                  dropdown={false}
-                  forceSelection
-                  placeholder="I am here..."
-                  onChange={(e) => {
-                    // typing
-                    if (typeof e.value === 'string') setOriginQuery(e.value);
-                  }}
-                  onSelect={(e) => {
-                    const selected = e.value as LocationOption;
-                    setOrigin(selected);
-                    setOriginQuery(selected.label);
-                    emitChange(selected, destination);
-                  }}
-                  onClick={() => onSelectMap?.('origin')}
-                  className="w-full"
-                  inputClassName="w-full"
-                />
-              </div>
+              <AutoComplete
+                value={origin ?? originQuery}
+                suggestions={originSuggestions}
+                completeMethod={completeOrigin}
+                field="label"
+                dropdown={false}
+                forceSelection
+                placeholder="I am here..."
+                onChange={(e) => {
+                  // typing
+                  if (typeof e.value === 'string') setOriginQuery(e.value);
+                }}
+                onSelect={(e) => {
+                  const selected = e.value as LocationOption;
+                  setOrigin(selected);
+                  setOriginQuery(selected.label);
+                  emitChange(selected, destination);
+                }}
+                onClick={() => onSelectMap?.('origin')}
+                className="w-full"
+                inputClassName="w-full"
+              />
             </div>
 
             <div className="flex flex-column gap-1">
-              <div className="p-inputgroup flex-1">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-map-marker text-blue-700"></i>
-                </span>
-                <AutoComplete
-                  value={destination ?? destQuery}
-                  suggestions={destSuggestions}
-                  completeMethod={completeDestination}
-                  onClick={() => onSelectMap?.('destination')}
-                  field="label"
-                  dropdown={false}
-                  forceSelection
-                  placeholder="Take me there..."
-                  onChange={(e) => {
-                    if (typeof e.value === 'string') setDestQuery(e.value);
-                  }}
-                  onSelect={(e) => {
-                    const selected = e.value as LocationOption;
-                    setDestination(selected);
-                    setDestQuery(selected.label);
-                    emitChange(origin, selected);
-                  }}
-                  className="w-full"
-                  inputClassName="w-full"
-                />
-              </div>
-            </div>
-            <div className="flex gap-2 justify-content-end pt-1">
-              <Button
-                label="Clear"
-                size="small"
-                rounded
-                icon="pi pi-times"
-                severity="warning"
-                title="Clear Search"
-                outlined
-                onClick={clearAll}
-                type="button"
+              <AutoComplete
+                value={destination ?? destQuery}
+                suggestions={destSuggestions}
+                completeMethod={completeDestination}
+                onClick={() => onSelectMap?.('destination')}
+                field="label"
+                dropdown={false}
+                forceSelection
+                placeholder="Take me there..."
+                onChange={(e) => {
+                  if (typeof e.value === 'string') setDestQuery(e.value);
+                }}
+                onSelect={(e) => {
+                  const selected = e.value as LocationOption;
+                  setDestination(selected);
+                  setDestQuery(selected.label);
+                  emitChange(origin, selected);
+                }}
+                className="w-full"
+                inputClassName="w-full"
               />
+            </div>
+
+            <div className="flex flex-column gap-2 pt-1">
               <Button
                 label="GORA"
                 title="Find Routes"
@@ -233,7 +212,21 @@ export function FloatingRouteSearch({
                 className="btn-blue"
                 rounded
               />
+              <Button
+                label="Clear"
+                size="small"
+                rounded
+                icon="pi pi-times"
+                severity="contrast"
+                title="Clear Search"
+                outlined
+                onClick={clearAll}
+                type="button"
+              />
             </div>
+            <p>
+              <small>Click from map or search place keyword..</small>
+            </p>
           </div>
         </Card>
       )}

@@ -42,4 +42,14 @@
     margin: 0;
     bottom: 0;
   }
+
+  .btn-direction {
+    max-width: 160px;
+  }
+  
+  .btn-direction .p-button-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

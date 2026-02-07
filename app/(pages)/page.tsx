@@ -10,6 +10,8 @@ import dynamic from 'next/dynamic';
 import FloatAlertDirectionChooser from '../components/float-alert-direction-chooser/component';
 import InitialLoader from '../components/initial-loader/component';
 import React, { useEffect, useState } from 'react';
+import { Card } from 'primereact/card';
+import { Button } from 'primereact/button';
 
 const RouteMapper = dynamic(() => import('@/app/components/takeme/mapper/component').then((m) => m.RouteMapper), { ssr: false });
 
@@ -81,7 +83,11 @@ const HomePage = () => {
         />
 
         {routeFares.length != 0 && (
-          <FloatingRouteList onRouteClick={(routeFare) => setRoutes(routeFare.route_fare.map((r) => r.route))} route_fares={routeFares} />
+          <FloatingRouteList
+            locations={initialLocations}
+            onRouteClick={(routeFare) => setRoutes(routeFare.route_fare.map((r) => r.route))}
+            route_fares={routeFares}
+          />
         )}
 
         {isRouteFareFetching && <LoadingProgress />}

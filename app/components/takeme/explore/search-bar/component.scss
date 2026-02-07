@@ -50,5 +50,24 @@
       color: vars.$black-4;
     }
 
+    /* Rounded input */
+.p-autocomplete .p-inputtext {
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-color: vars.$blue;
+}
+
+/* Rounded dropdown panel */
+.p-autocomplete-panel {
+  border-radius: 14px;
+  overflow: hidden; /* keeps corners clean */
+}
+
+/* Optional: each item spacing */
+.p-autocomplete-items .p-autocomplete-item {
+  padding: 0.75rem 1rem;
+}
+
   }
 }
