@@ -1,16 +1,29 @@
 import { LocationOption } from '@/app/components/takeme/explore/search-bar/component';
+import useLocationParams from '@/app/hooks/useLocationParams';
 import RouteService from '@/app/services/RouteService';
 import { LatLng, Route, RouteFares } from '@/app/types/route';
-import { reverseGeocode, searchLocation } from '@/app/utils';
-import { useEffect, useState } from 'react';
+import { copyToClipboard, reverseGeocode, searchLocation } from '@/app/utils';
+import { useEffect, useRef, useState } from 'react';
 
 export const useExplorePage = () => {
+  // @NOTE: Disable for beta version
+  // const { currentLocation } = useCurrentLocation();
+
+  // @NOTE: Fix location only for LAPU LAPU area scope. ONLY FOR BETA VERSION
+  const [fixLocation] = useState<LatLng>({
+    lat: 10.285748,
+    lng: 123.9744526
+  });
+
   // Loading State
   const [isRouteFareFetching, setIsRouteFareFetching] = useState<boolean>(false);
   const [hideSearchBar, setHideSearchBar] = useState<boolean | undefined>();
 
   const [chooseOnMap, setOnChooseMap] = useState<'origin' | 'destination' | undefined>(undefined);
   const [zoomTo, setZoomTo] = useState<'origin' | 'destination' | undefined>(undefined);
+
+  const { setCoordinateParameters, clearCoordinateParams, getCoordinateParameters, coordinateParams, getUrl } = useLocationParams();
+  const cood = getCoordinateParameters();
 
   // Initial locations
   const [originCoordinates, setOriginCoordinates] = useState<LatLng | undefined>();
@@ -21,6 +34,15 @@ export const useExplorePage = () => {
   const [routeFares, setRouteFares] = useState<RouteFares[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
   const [noRoutesFound, setNoRoutesFound] = useState<boolean>(false);
+
+  const toast = useRef(null);
+
+  const showCopiedMessage = () => {
+    if (toast?.current) {
+      // @ts-ignore
+      toast.current?.show({ severity: 'contrast', summary: 'GORA', detail: 'Shareable link copied.' });
+    }
+  };
 
   const searchNearestRoutes = async (origin: LatLng, destination: LatLng) => {
     // Search possible routes
@@ -89,12 +111,62 @@ export const useExplorePage = () => {
     setRoutes([]);
     setOnChooseMap(undefined);
     setNoRoutesFound(false);
+    clearCoordinateParams();
+  };
+
+  const shareUrl = () => {
+    copyToClipboard(getUrl());
+    showCopiedMessage();
+  };
+
+  const initialLoadCoordinateParams = async () => {
+    let loc = initialLocations;
+    // Set the coordinates coming from url parameter
+    if (cood.origin) {
+      setOriginCoordinates(cood.origin);
+      const originGeo = await reverseGeocode(cood.origin.lat, cood.origin.lng);
+      loc = {
+        ...loc,
+        origin: originGeo
+      };
+    }
+
+    if (cood.destination) {
+      setDestinationCoordinates(cood.destination);
+      const destGeo = await reverseGeocode(cood.destination.lat, cood.destination.lng);
+      loc = {
+        ...loc,
+        destination: destGeo
+      };
+    }
+    setInitialLocations({ ...initialLocations, ...loc });
   };
 
   useEffect(() => {
-    if (initialLocations && initialLocations.destination && initialLocations.origin)
+    if (initialLocations && initialLocations.destination && initialLocations.origin) {
       onSearchRoute({ origin: initialLocations.origin, destination: initialLocations.destination });
+    }
   }, [initialLocations]);
+
+  useEffect(() => {
+    // Append params
+    if (initialLocations) setCoordinateParameters('current', fixLocation);
+  }, [initialLocations]);
+
+  useEffect(() => {
+    // Append params
+    if (destinationCoordinates) setCoordinateParameters('destination', destinationCoordinates);
+  }, [destinationCoordinates]);
+
+  useEffect(() => {
+    // Append params
+    if (originCoordinates) setCoordinateParameters('origin', originCoordinates);
+  }, [originCoordinates]);
+
+  useEffect(() => {
+    // Initialize first value from url parameters
+    if (coordinateParams) initialLoadCoordinateParams();
+  }, []);
 
   return {
     chooseDirection,
@@ -109,6 +181,9 @@ export const useExplorePage = () => {
     setRouteFares,
     setRoutes,
     setZoomTo,
+    shareUrl,
+    fixLocation,
+    toast,
     zoomTo,
     chooseOnMap,
     destinationCoordinates,

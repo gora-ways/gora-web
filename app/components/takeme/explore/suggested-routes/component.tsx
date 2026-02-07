@@ -5,15 +5,17 @@ import './component.scss';
 import { useMediaQuery } from '@/app/hooks/useMediaQuery';
 import { LocationOption } from '../search-bar/component';
 import { Button } from 'primereact/button';
+import AppLogoIcon from '@/app/components/icons/AppLogoIcon';
 
 type Props = {
   route_fares: RouteFares[];
   locations?: { origin?: LocationOption; destination?: LocationOption };
   onRouteClick?: (route_fare: RouteFares) => void;
   onDirectionClick?: (direction: 'destination' | 'origin') => void;
+  onShareClick?: () => void;
 };
 
-export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick, locations }: Props) {
+export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick, onShareClick, locations }: Props) {
   const isMobile = useMediaQuery();
 
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
@@ -30,13 +32,33 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
 
   return (
     <div className={`suggested-routes ${isMobile ? 'mobile' : ''}`}>
+      <div className="flex align-items-center mr-3 mt-3">
+        <div className="flex align-items-center app-icon">
+          <AppLogoIcon size={54} className="drop-shadow-lg" />
+          <div className="app-name">
+            <h6 className="m-0">GORA</h6>
+            <span className="app-tag-line">Find Ways</span>
+          </div>
+        </div>
+
+        <Button
+          label="Share"
+          className="ml-auto"
+          size="small"
+          outlined
+          rounded
+          severity="success"
+          icon="pi pi-share-alt"
+          onClick={() => onShareClick && onShareClick()}
+        />
+      </div>
       <div className={`suggestion-box`}>
         <p className="m-0">
           <i className="pi pi pi-directions text-blue-600"></i> <small> Direction:</small>
         </p>
         {locations && (
           <div className="w-full mb-3">
-            <div className="flex gap-2 m-2">
+            <div className="flex align-items-center gap-2 m-2">
               <Button
                 label={locations.origin?.label}
                 title={locations.origin?.label}

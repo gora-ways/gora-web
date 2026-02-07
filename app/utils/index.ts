@@ -115,3 +115,14 @@ export const reverseGeocode = async (lat: number, lng: number) => {
     raw: data
   };
 };
+
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      console.log('Copied!');
+    })
+    .catch((err) => {
+      console.error('Failed to copy:', err);
+    });
+};

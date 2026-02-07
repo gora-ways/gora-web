@@ -2,7 +2,6 @@
 
 import { FloatingRouteList } from '../components/takeme/explore/suggested-routes/component';
 import { FloatingRouteSearch } from '../components/takeme/explore/search-bar/component';
-import { LatLng } from '../types/route';
 import { LoadingProgress } from '../components/loading-progress/component';
 import { useExplorePage } from './(explore)/hooks/useExplorePage';
 import { useHasMounted } from '../hooks/useHasMounted';
@@ -10,6 +9,7 @@ import dynamic from 'next/dynamic';
 import FloatAlertDirectionChooser from '../components/float-alert-direction-chooser/component';
 import InitialLoader from '../components/initial-loader/component';
 import React, { useEffect, useState } from 'react';
+import { Toast } from 'primereact/toast';
 
 const RouteMapper = dynamic(() => import('@/app/components/takeme/mapper/component').then((m) => m.RouteMapper), { ssr: false });
 
@@ -25,7 +25,8 @@ const HomePage = () => {
     hideSearchBar,
     noRoutesFound,
     zoomTo,
-
+    fixLocation,
+    toast,
     setZoomTo,
     chooseDirection,
     clearSearch,
@@ -33,7 +34,8 @@ const HomePage = () => {
     searchLocation,
     setOnChooseMap,
     setRoutes,
-    setHideSearchBar
+    setHideSearchBar,
+    shareUrl
   } = useExplorePage();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -45,15 +47,6 @@ const HomePage = () => {
       return () => clearTimeout(t);
     }
   }, [comMounted]);
-
-  // @NOTE: Disable for beta version
-  // const { currentLocation } = useCurrentLocation();
-
-  // @NOTE: Fix location only for LAPU LAPU area scope. ONLY FOR BETA VERSION
-  const [fixLocation] = useState<LatLng>({
-    lat: 10.285748,
-    lng: 123.9744526
-  });
 
   return (
     <>
@@ -98,6 +91,7 @@ const HomePage = () => {
             onDirectionClick={(direction) => setZoomTo(direction)}
             locations={initialLocations}
             onRouteClick={(routeFare) => setRoutes(routeFare.route_fare.map((r) => r.route))}
+            onShareClick={shareUrl}
             route_fares={routeFares}
           />
         )}
@@ -105,6 +99,8 @@ const HomePage = () => {
         {isRouteFareFetching && <LoadingProgress />}
 
         <p style={{ position: 'absolute', bottom: '10px', zIndex: 900, left: '10px' }}>Beta version — available only in Lapu-Lapu City, PH.</p>
+
+        <Toast ref={toast} />
       </div>
     </>
   );
