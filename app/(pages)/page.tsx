@@ -10,8 +10,6 @@ import dynamic from 'next/dynamic';
 import FloatAlertDirectionChooser from '../components/float-alert-direction-chooser/component';
 import InitialLoader from '../components/initial-loader/component';
 import React, { useEffect, useState } from 'react';
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
 
 const RouteMapper = dynamic(() => import('@/app/components/takeme/mapper/component').then((m) => m.RouteMapper), { ssr: false });
 
@@ -25,6 +23,7 @@ const HomePage = () => {
     routeFares,
     routes,
     hideSearchBar,
+    noRoutesFound,
 
     chooseDirection,
     clearSearch,
@@ -58,6 +57,15 @@ const HomePage = () => {
     <>
       <InitialLoader visible={!isMounted} appName="GORA" tagline="Discover Lapu-Lapu, Philippines — map your trip, ride like a local." />
       <div style={{ height: '100vh', width: '100vw' }}>
+        {noRoutesFound && (
+          <div
+            style={{ position: 'absolute', zIndex: 900, width: '100%', backgroundColor: '#2BCBBA', color: 'white' }}
+            className={`text-center bg-red-600`}
+          >
+            <p className="text-center p-1">No routes were found for the selected direction. Please try again.</p>
+          </div>
+        )}
+
         {chooseOnMap && <FloatAlertDirectionChooser type={chooseOnMap} />}
 
         <RouteMapper

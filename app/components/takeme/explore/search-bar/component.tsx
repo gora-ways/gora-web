@@ -152,52 +152,56 @@ export function FloatingRouteSearch({
           </h5>
           <div className="flex flex-column gap-2">
             <div className="flex flex-column gap-1">
-              <AutoComplete
-                value={origin ?? originQuery}
-                suggestions={originSuggestions}
-                completeMethod={completeOrigin}
-                field="label"
-                dropdown={false}
-                forceSelection
-                placeholder="I am here..."
-                onChange={(e) => {
-                  // typing
-                  if (typeof e.value === 'string') setOriginQuery(e.value);
-                }}
-                onSelect={(e) => {
-                  const selected = e.value as LocationOption;
-                  setOrigin(selected);
-                  setOriginQuery(selected.label);
-                  emitChange(selected, destination);
-                }}
-                onClick={() => onSelectMap?.('origin')}
-                className="w-full"
-                inputClassName="w-full"
-              />
+              <div className="flex flex-row align-items-center gap-1">
+                <AutoComplete
+                  value={origin ?? originQuery}
+                  suggestions={originSuggestions}
+                  completeMethod={completeOrigin}
+                  field="label"
+                  dropdown={false}
+                  forceSelection
+                  placeholder="I am here..."
+                  onChange={(e) => {
+                    // typing
+                    if (typeof e.value === 'string') setOriginQuery(e.value);
+                  }}
+                  onSelect={(e) => {
+                    const selected = e.value as LocationOption;
+                    setOrigin(selected);
+                    setOriginQuery(selected.label);
+                    emitChange(selected, destination);
+                  }}
+                  className="w-full"
+                  inputClassName="w-full"
+                />
+                <Button onClick={() => onSelectMap?.('origin')} className="btn-blue" size="small" outlined icon="pi pi-map-marker" />
+              </div>
             </div>
 
             <div className="flex flex-column gap-1">
-              <AutoComplete
-                value={destination ?? destQuery}
-                suggestions={destSuggestions}
-                completeMethod={completeDestination}
-                onClick={() => onSelectMap?.('destination')}
-                field="label"
-                dropdown={false}
-                forceSelection
-                placeholder="Take me there..."
-                onChange={(e) => {
-                  if (typeof e.value === 'string') setDestQuery(e.value);
-                }}
-                onSelect={(e) => {
-                  const selected = e.value as LocationOption;
-                  setDestination(selected);
-                  setDestQuery(selected.label);
-                  emitChange(origin, selected);
-                }}
-                className="w-full"
-                inputClassName="w-full"
-              />
+              <div className="flex flex-row align-items-center gap-1">
+                <AutoComplete
+                  value={destination ?? destQuery}
+                  suggestions={destSuggestions}
+                  completeMethod={completeDestination}
+                  field="label"
+                  dropdown={false}
+                  forceSelection
+                  placeholder="Take me there..."
+                  onChange={(e) => {
+                    if (typeof e.value === 'string') setDestQuery(e.value);
+                  }}
+                  onSelect={(e) => {
+                    const selected = e.value as LocationOption;
+                    setDestination(selected);
+                    setDestQuery(selected.label);
+                    emitChange(origin, selected);
+                  }}
+                  className="w-full"
+                  inputClassName="w-full"
+                />
+                <Button onClick={() => onSelectMap?.('destination')} className="btn-blue" outlined size="small" icon="pi pi-map-marker" />
+              </div>
             </div>
 
             <div className="flex flex-column gap-2 pt-1">

@@ -19,6 +19,7 @@ export const useExplorePage = () => {
   // Fares
   const [routeFares, setRouteFares] = useState<RouteFares[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
+  const [noRoutesFound, setNoRoutesFound] = useState<boolean>(false);
 
   const searchNearestRoutes = async (origin: LatLng, destination: LatLng) => {
     // Search possible routes
@@ -41,9 +42,11 @@ export const useExplorePage = () => {
         // Get the first route only and set as initial
         const fare = fares[0];
         setRoutes(fare.route_fare.map((r) => r.route));
+        setHideSearchBar(true);
+      } else if (fares.length == 0) {
+        setHideSearchBar(false);
+        setNoRoutesFound(true);
       }
-
-      setHideSearchBar(true);
     } catch (error) {
       throw error;
     } finally {
@@ -61,6 +64,7 @@ export const useExplorePage = () => {
   };
 
   const chooseDirection = async ({ type, coordinates }: { type: 'origin' | 'destination'; coordinates: LatLng }) => {
+    setNoRoutesFound(false);
     setHideSearchBar(false);
     if (type == 'origin') {
       setOriginCoordinates(coordinates);
@@ -83,6 +87,7 @@ export const useExplorePage = () => {
     setRouteFares([]);
     setRoutes([]);
     setOnChooseMap(undefined);
+    setNoRoutesFound(false);
   };
 
   useEffect(() => {
@@ -109,6 +114,7 @@ export const useExplorePage = () => {
     isRouteFareFetching,
     originCoordinates,
     routeFares,
-    routes
+    routes,
+    noRoutesFound
   };
 };

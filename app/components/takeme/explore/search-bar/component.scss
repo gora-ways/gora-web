@@ -37,9 +37,11 @@
     margin: 1rem;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
     padding: 0.5rem;
+
     .p-card-content {
       padding: 0;
     }
+
     &:hover {
       transform: translateY(-2px);
     }
@@ -51,23 +53,26 @@
     }
 
     /* Rounded input */
-.p-autocomplete .p-inputtext {
-  border-radius: 9999px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border-color: vars.$blue;
-}
+    .p-autocomplete .p-inputtext {
+      border-radius: 9999px;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border-color: vars.$blue;
+      color: vars.$black-9;
+      font-size: 0.95rem;
+    }
 
-/* Rounded dropdown panel */
-.p-autocomplete-panel {
-  border-radius: 14px;
-  overflow: hidden; /* keeps corners clean */
-}
+    /* Rounded dropdown panel */
+    .p-autocomplete-panel {
+      border-radius: 14px;
+      overflow: hidden;
+      /* keeps corners clean */
+    }
 
-/* Optional: each item spacing */
-.p-autocomplete-items .p-autocomplete-item {
-  padding: 0.75rem 1rem;
-}
+    /* Optional: each item spacing */
+    .p-autocomplete-items .p-autocomplete-item {
+      padding: 0.75rem 1rem;
+    }
 
   }
 }
