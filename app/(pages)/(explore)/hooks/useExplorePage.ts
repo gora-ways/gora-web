@@ -1,8 +1,9 @@
 import { LocationOption } from '@/app/components/takeme/explore/search-bar/component';
+import { env } from '@/app/config';
 import useLocationParams from '@/app/hooks/useLocationParams';
 import RouteService from '@/app/services/RouteService';
 import { LatLng, Route, RouteFares } from '@/app/types/route';
-import { copyToClipboard, reverseGeocode, searchLocation } from '@/app/utils';
+import { copyToClipboard, reverseGeocode, searchLocation, shareToFacebook } from '@/app/utils';
 import { useEffect, useRef, useState } from 'react';
 
 export const useExplorePage = () => {
@@ -40,7 +41,7 @@ export const useExplorePage = () => {
   const showCopiedMessage = () => {
     if (toast?.current) {
       // @ts-ignore
-      toast.current?.show({ severity: 'contrast', summary: 'GORA', detail: 'Shareable link copied.' });
+      toast.current?.show({ severity: 'success', summary: 'GORA', detail: 'Shareable link copied.', position: 'center', baseZIndex: 9000 });
     }
   };
 
@@ -54,7 +55,7 @@ export const useExplorePage = () => {
         origin_lng: origin.lng,
         destination_lat: destination.lat,
         destination_lng: destination.lng,
-        radius: 100
+        radius: Number(env.routes.radius)
       });
 
       const fares: RouteFares[] = data.map((r) => ({ total_fare: r.reduce((sum, r) => sum + (r.estimate_fare ?? 0), 0), route_fare: r }));
@@ -67,8 +68,14 @@ export const useExplorePage = () => {
         setRoutes(fare.route_fare.map((r) => r.route));
         setHideSearchBar(true);
       } else if (fares.length == 0) {
+        setRoutes([]);
         setHideSearchBar(false);
         setNoRoutesFound(true);
+
+        // Disappear message
+        setTimeout(() => {
+          setNoRoutesFound(false);
+        }, 3000);
       }
     } catch (error) {
       throw error;
@@ -114,9 +121,13 @@ export const useExplorePage = () => {
     clearCoordinateParams();
   };
 
-  const shareUrl = () => {
-    copyToClipboard(getUrl());
-    showCopiedMessage();
+  const shareUrl = (type: 'copy' | 'facebook') => {
+    if (type === 'copy') {
+      copyToClipboard(getUrl());
+      showCopiedMessage();
+    } else {
+      shareToFacebook(getUrl(), 'Explore Lapu-Lapu like a local 🇵🇭');
+    }
   };
 
   const initialLoadCoordinateParams = async () => {
@@ -182,6 +193,7 @@ export const useExplorePage = () => {
     setRoutes,
     setZoomTo,
     shareUrl,
+    setNoRoutesFound,
     fixLocation,
     toast,
     zoomTo,

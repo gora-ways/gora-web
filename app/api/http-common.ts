@@ -5,9 +5,10 @@ import TokenService from '../services/TokenService';
 import { API_PUBLIC_ROUTES } from '../constants/api-routes';
 import { RESPONSE_SERVICE_UNAVAILABLE, RESPONSE_UNAUTHORIZED } from '../constants/messages';
 import AuthService from '../services/AuthService';
+import { env } from '../config';
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: env.api.url,
   withCredentials: true,
   withXSRFToken: true,
   headers: {

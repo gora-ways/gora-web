@@ -6,13 +6,14 @@ import { useMediaQuery } from '@/app/hooks/useMediaQuery';
 import { LocationOption } from '../search-bar/component';
 import { Button } from 'primereact/button';
 import AppLogoIcon from '@/app/components/icons/AppLogoIcon';
+import ShareButton from '../share-button/component';
 
 type Props = {
   route_fares: RouteFares[];
   locations?: { origin?: LocationOption; destination?: LocationOption };
   onRouteClick?: (route_fare: RouteFares) => void;
   onDirectionClick?: (direction: 'destination' | 'origin') => void;
-  onShareClick?: () => void;
+  onShareClick?: (type: 'copy' | 'facebook') => void;
 };
 
 export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick, onShareClick, locations }: Props) {
@@ -30,6 +31,13 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
     }
   };
 
+  const clickDirection = (direction: 'destination' | 'origin') => {
+    if (onDirectionClick) {
+      setActiveIndex(null);
+      onDirectionClick(direction);
+    }
+  };
+
   return (
     <div className={`suggested-routes ${isMobile ? 'mobile' : ''}`}>
       <div className="flex align-items-center mr-3 mt-3">
@@ -40,17 +48,7 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
             <span className="app-tag-line">Find Ways</span>
           </div>
         </div>
-
-        <Button
-          label="Share"
-          className="ml-auto"
-          size="small"
-          outlined
-          rounded
-          severity="success"
-          icon="pi pi-share-alt"
-          onClick={() => onShareClick && onShareClick()}
-        />
+        <ShareButton onShareClick={onShareClick} className="ml-auto" />
       </div>
       <div className={`suggestion-box`}>
         <p className="m-0">
@@ -64,19 +62,21 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
                 title={locations.origin?.label}
                 outlined
                 rounded
+                size="small"
                 severity="danger"
                 className="btn-direction"
                 icon="pi pi-directions"
-                onClick={() => onDirectionClick && onDirectionClick('origin')}
+                onClick={() => clickDirection('origin')}
               />
               <Button
                 label={locations.destination?.label}
                 title={locations.destination?.label}
                 outlined
                 rounded
+                size="small"
                 className="btn-primary btn-direction"
                 icon="pi pi-directions-alt"
-                onClick={() => onDirectionClick && onDirectionClick('destination')}
+                onClick={() => clickDirection('destination')}
               />
             </div>
           </div>

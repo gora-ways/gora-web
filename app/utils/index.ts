@@ -126,3 +126,18 @@ export const copyToClipboard = (text: string) => {
       console.error('Failed to copy:', err);
     });
 };
+
+export function shareToFacebook(url: string, quote?: string) {
+  const shareUrl = new URL('https://www.facebook.com/sharer/sharer.php');
+
+  shareUrl.searchParams.set(
+    'u',
+    'https://gora.kevinloquencio.it.com?cln=123.9744526&cl=10.285748&rln=123.94611831222274&rl=10.27183799070544&dln=123.9779206382351&dl=10.326057955956331'
+  );
+
+  if (quote) {
+    shareUrl.searchParams.set('quote', quote);
+  }
+
+  window.open(shareUrl.toString(), '_blank', 'noopener,noreferrer');
+}
