@@ -3,13 +3,15 @@
 import { FloatingRouteList } from '../components/takeme/explore/suggested-routes/component';
 import { FloatingRouteSearch } from '../components/takeme/explore/search-bar/component';
 import { LoadingProgress } from '../components/loading-progress/component';
+import { Toast } from 'primereact/toast';
+import { TourController } from '../components/tours/tour-controller/component';
 import { useExplorePage } from './(explore)/hooks/useExplorePage';
 import { useHasMounted } from '../hooks/useHasMounted';
 import dynamic from 'next/dynamic';
 import FloatAlertDirectionChooser from '../components/float-alert-direction-chooser/component';
 import InitialLoader from '../components/initial-loader/component';
 import React, { useEffect, useState } from 'react';
-import { Toast } from 'primereact/toast';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const RouteMapper = dynamic(() => import('@/app/components/takeme/mapper/component').then((m) => m.RouteMapper), { ssr: false });
 
@@ -35,11 +37,14 @@ const HomePage = () => {
     setOnChooseMap,
     setRoutes,
     setHideSearchBar,
-    shareUrl
+    shareUrl,
+    onTourStart,
+    onTourStop
   } = useExplorePage();
 
   const [isMounted, setIsMounted] = useState(false);
   const comMounted = useHasMounted();
+  const isMobile = useMediaQuery();
 
   useEffect(() => {
     if (comMounted) {
@@ -61,8 +66,13 @@ const HomePage = () => {
           </div>
         )}
 
+        {/* Tour Guide */}
+        {(routes.length <= 0 || isMobile) && <TourController onStartClick={onTourStart} onStopClick={onTourStop} />}
+
+        {/* Sticky alert message */}
         {chooseOnMap && <FloatAlertDirectionChooser type={chooseOnMap} />}
 
+        {/* Map */}
         <RouteMapper
           chooseDirection={chooseOnMap}
           destination={destinationCoordinates}
@@ -74,6 +84,7 @@ const HomePage = () => {
           disableInitialCenterPinning={true} // @NOTE: ONLY FOR BETA
         />
 
+        {/* Search Bar */}
         <FloatingRouteSearch
           initialLocations={initialLocations}
           onClear={clearSearch}
@@ -86,6 +97,7 @@ const HomePage = () => {
           hideSearchBar={hideSearchBar}
         />
 
+        {/* Route Suggestions */}
         {routeFares.length != 0 && (
           <FloatingRouteList
             onDirectionClick={(direction) => setZoomTo(direction)}

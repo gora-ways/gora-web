@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import React from 'react';
-import { AuthProvider } from '../contexts/useAuth';
 import { env } from '../config';
+import { NextStepProvider } from 'nextstepjs';
 
 interface DefaultLayoutProps {
   children: React.ReactNode;
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
 
 export default function DefaultLayout({ children }: DefaultLayoutProps) {
   return (
-    <AuthProvider>
+    <NextStepProvider>
       <React.Fragment>{children}</React.Fragment>
-    </AuthProvider>
+    </NextStepProvider>
   );
 }

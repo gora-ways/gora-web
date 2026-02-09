@@ -1,10 +1,11 @@
-import { LocationOption } from '@/app/components/takeme/explore/search-bar/component';
-import { env } from '@/app/config';
-import useLocationParams from '@/app/hooks/useLocationParams';
-import RouteService from '@/app/services/RouteService';
-import { LatLng, Route, RouteFares } from '@/app/types/route';
 import { copyToClipboard, reverseGeocode, searchLocation, shareToFacebook } from '@/app/utils';
+import { env } from '@/app/config';
+import { LatLng, Route, RouteFares } from '@/app/types/route';
+import { LocationOption } from '@/app/components/takeme/explore/search-bar/component';
 import { useEffect, useRef, useState } from 'react';
+import { useTour } from './useTour';
+import RouteService from '@/app/services/RouteService';
+import useLocationParams from '@/app/hooks/useLocationParams';
 
 export const useExplorePage = () => {
   // @NOTE: Disable for beta version
@@ -23,8 +24,9 @@ export const useExplorePage = () => {
   const [chooseOnMap, setOnChooseMap] = useState<'origin' | 'destination' | undefined>(undefined);
   const [zoomTo, setZoomTo] = useState<'origin' | 'destination' | undefined>(undefined);
 
-  const { setCoordinateParameters, clearCoordinateParams, getCoordinateParameters, coordinateParams, getUrl } = useLocationParams();
-  const cood = getCoordinateParameters();
+  const { setCoordinateParameters, clearCoordinateParams, locationParameters, getUrl } = useLocationParams();
+
+  const { tourCoordinates, tourStarted, setTourStarted } = useTour();
 
   // Initial locations
   const [originCoordinates, setOriginCoordinates] = useState<LatLng | undefined>();
@@ -66,7 +68,9 @@ export const useExplorePage = () => {
         // Get the first route only and set as initial
         const fare = fares[0];
         setRoutes(fare.route_fare.map((r) => r.route));
-        setHideSearchBar(true);
+
+        // Only hide when not touring
+        if (!tourStarted) setHideSearchBar(true);
       } else if (fares.length == 0) {
         setRoutes([]);
         setHideSearchBar(false);
@@ -105,15 +109,14 @@ export const useExplorePage = () => {
       const destGeo = await reverseGeocode(coordinates.lat, coordinates.lng);
       setInitialLocations({ ...initialLocations, destination: destGeo });
     }
-
     setOnChooseMap(undefined);
   };
 
   const clearSearch = () => {
     // Clear searches and routes
+    setInitialLocations(undefined);
     setOriginCoordinates(undefined);
     setDestinationCoordinates(undefined);
-    setInitialLocations(undefined);
     setRouteFares([]);
     setRoutes([]);
     setOnChooseMap(undefined);
@@ -132,6 +135,9 @@ export const useExplorePage = () => {
 
   const initialLoadCoordinateParams = async () => {
     let loc = initialLocations;
+    const cood = locationParameters;
+
+    if (!cood) return;
     // Set the coordinates coming from url parameter
     if (cood.origin) {
       setOriginCoordinates(cood.origin);
@@ -153,33 +159,60 @@ export const useExplorePage = () => {
     setInitialLocations({ ...initialLocations, ...loc });
   };
 
+  const manualInitLocations = async (origin: LatLng, destination: LatLng) => {
+    let loc = initialLocations;
+
+    setOriginCoordinates(origin);
+    const originGeo = await reverseGeocode(origin.lat, origin.lng);
+    loc = {
+      ...loc,
+      origin: originGeo
+    };
+
+    setDestinationCoordinates(destination);
+    const destGeo = await reverseGeocode(destination.lat, destination.lng);
+    loc = {
+      ...loc,
+      destination: destGeo
+    };
+
+    setInitialLocations({ ...initialLocations, ...loc });
+  };
+
+  const onTourStart = () => {
+    if (tourCoordinates.origin && tourCoordinates.destination) {
+      setTourStarted(true);
+      setHideSearchBar(false);
+      manualInitLocations(tourCoordinates.origin, tourCoordinates.destination);
+    }
+  };
+
+  const onTourStop = () => {
+    clearSearch();
+  };
+
   useEffect(() => {
     if (initialLocations && initialLocations.destination && initialLocations.origin) {
+      console.log('tourStarted', tourStarted);
+      // Append only when not touring
+      if (!tourStarted) {
+        setCoordinateParameters('current', fixLocation);
+        if (destinationCoordinates) setCoordinateParameters('destination', destinationCoordinates);
+        if (originCoordinates) setCoordinateParameters('origin', originCoordinates);
+      }
       onSearchRoute({ origin: initialLocations.origin, destination: initialLocations.destination });
     }
   }, [initialLocations]);
 
   useEffect(() => {
-    // Append params
-    if (initialLocations) setCoordinateParameters('current', fixLocation);
-  }, [initialLocations]);
-
-  useEffect(() => {
-    // Append params
-    if (destinationCoordinates) setCoordinateParameters('destination', destinationCoordinates);
-  }, [destinationCoordinates]);
-
-  useEffect(() => {
-    // Append params
-    if (originCoordinates) setCoordinateParameters('origin', originCoordinates);
-  }, [originCoordinates]);
-
-  useEffect(() => {
     // Initialize first value from url parameters
-    if (coordinateParams) initialLoadCoordinateParams();
-  }, []);
+    if (locationParameters) {
+      initialLoadCoordinateParams();
+    }
+  }, [locationParameters]);
 
   return {
+    initialLoadCoordinateParams,
     chooseDirection,
     clearSearch,
     onSearchRoute,
@@ -194,6 +227,9 @@ export const useExplorePage = () => {
     setZoomTo,
     shareUrl,
     setNoRoutesFound,
+    manualInitLocations,
+    onTourStart,
+    onTourStop,
     fixLocation,
     toast,
     zoomTo,

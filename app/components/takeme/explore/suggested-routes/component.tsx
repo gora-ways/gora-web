@@ -7,6 +7,7 @@ import { LocationOption } from '../search-bar/component';
 import { Button } from 'primereact/button';
 import AppLogoIcon from '@/app/components/icons/AppLogoIcon';
 import ShareButton from '../share-button/component';
+import { GORA_TOUR_STEP_SELECTOR } from '@/app/constants/tour';
 
 type Props = {
   route_fares: RouteFares[];
@@ -48,9 +49,9 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
             <span className="app-tag-line">Find Ways</span>
           </div>
         </div>
-        <ShareButton onShareClick={onShareClick} className="ml-auto" />
+        <ShareButton id={GORA_TOUR_STEP_SELECTOR.NINTH} onShareClick={onShareClick} className="ml-auto" />
       </div>
-      <div className={`suggestion-box`}>
+      <div className={`suggestion-box`} id={GORA_TOUR_STEP_SELECTOR.FIFTH}>
         <p className="m-0">
           <i className="pi pi pi-directions text-blue-600"></i> <small> Direction:</small>
         </p>
@@ -59,7 +60,9 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
             <div className="flex align-items-center gap-2 m-2">
               <Button
                 label={locations.origin?.label}
-                title={locations.origin?.label}
+                tooltip={locations.origin?.label}
+                id={GORA_TOUR_STEP_SELECTOR.SEVENTH}
+                tooltipOptions={{ position: 'left' }}
                 outlined
                 rounded
                 size="small"
@@ -70,7 +73,9 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
               />
               <Button
                 label={locations.destination?.label}
-                title={locations.destination?.label}
+                tooltip={locations.destination?.label}
+                id={GORA_TOUR_STEP_SELECTOR.EIGHT}
+                tooltipOptions={{ position: 'left' }}
                 outlined
                 rounded
                 size="small"
@@ -86,7 +91,7 @@ export function FloatingRouteList({ route_fares, onRouteClick, onDirectionClick,
           <i className="pi pi-star-fill text-yellow-600"></i> <small>Suggested Routes:</small>
         </p>
 
-        <Accordion activeIndex={activeIndex} onTabChange={onTabChange}>
+        <Accordion id={GORA_TOUR_STEP_SELECTOR.SIXTH} activeIndex={activeIndex} onTabChange={onTabChange}>
           {route_fares.map((r, i) => (
             <AccordionTab
               key={`route-${i}`}

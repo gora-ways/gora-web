@@ -20,14 +20,11 @@ const HomePage = () => {
 
   const getGeoLocaiton = useCallback(async () => {
     const location = await getCurrentLocation();
-    console.log(location);
     setCurrentLocation(location);
   }, []);
 
   const onRouteSelected = (route: Route | undefined) => {
     if (route && route.points && route.points.length > 0) setCurrentLocation({ lat: route?.points[0].lat, lng: route?.points[0].lng });
-
-    console.log(route?.name);
     setSelectedRoute(route);
   };
 

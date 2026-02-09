@@ -3,10 +3,11 @@ import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
 
 interface ShareButtonProps {
+  id?: string;
   className?: string;
   onShareClick?: (type: 'copy' | 'facebook') => void;
 }
-export default function ShareButton({ className, onShareClick }: ShareButtonProps) {
+export default function ShareButton({ id, className, onShareClick }: ShareButtonProps) {
   const menuLeft = useRef<any>(null);
   const items = [
     {
@@ -26,10 +27,12 @@ export default function ShareButton({ className, onShareClick }: ShareButtonProp
   ];
 
   return (
-    <div className={`${className}`}>
+    <div id={id} className={`${className}`}>
       <Menu model={items} popup ref={menuLeft} id="popup_menu_left" />
       <Button
         outlined
+        tooltip="Share GORA Routes"
+        tooltipOptions={{ position: 'left' }}
         rounded
         severity="success"
         size="small"

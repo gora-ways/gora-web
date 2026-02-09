@@ -1,28 +1,38 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(initialValue);
+function useLocalStorage<T>(key: string, defaultValue: T) {
+  const isHydrated = useRef(false);
 
-  // Load value only on client
+  const [storedValue, setStoredValue] = useState<T>(defaultValue);
+
+  // Read from localStorage (client only)
   useEffect(() => {
-    try {
-      if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
 
+    try {
       const item = window.localStorage.getItem(key);
-      setStoredValue(item ? (JSON.parse(item) as T) : initialValue);
+
+      if (item !== null) {
+        setStoredValue(JSON.parse(item) as T);
+      }
+
+      // mark hydration complete
+      isHydrated.current = true;
     } catch (error) {
-      console.warn(`Error reading localStorage key “${key}”:`, error);
+      console.warn(`Error reading localStorage key "${key}":`, error);
+      isHydrated.current = true;
     }
   }, [key]);
 
-  // Save to localStorage when value changes, client only
+  // Write ONLY after hydration and only on user updates
   useEffect(() => {
+    if (!isHydrated.current) return;
+    if (typeof window === 'undefined') return;
+
     try {
-      console.log('window', key);
-      if (typeof window === 'undefined') return;
       window.localStorage.setItem(key, JSON.stringify(storedValue));
     } catch (error) {
-      console.warn(`Error setting localStorage key “${key}”:`, error);
+      console.warn(`Error setting localStorage key "${key}":`, error);
     }
   }, [key, storedValue]);
 

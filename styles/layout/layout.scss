@@ -11,6 +11,10 @@
 @import "./_typography";
 @import "./buttons";
 
+.p-tooltip {
+  z-index: 6000 !important;
+}
+
 .leaflet-draw {
   z-index: 1000;
 }

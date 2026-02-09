@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { LatLng } from '../types/route';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
@@ -12,8 +12,6 @@ const coordinateKeys = {
   lng: 'ln'
 };
 
-const encodeKey = 'dq';
-
 interface LocationParamsInterface {
   origin?: LatLng;
   destination?: LatLng;
@@ -25,7 +23,38 @@ export default function useLocationParams() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const coordinateParams = new URLSearchParams(searchParams.toString());
+  const search = searchParams.toString();
+
+  const coordinateParams = useMemo(() => {
+    return new URLSearchParams(search);
+  }, [search]);
+
+  const locationParameters = useMemo<LocationParamsInterface | undefined>(() => {
+    const res: LocationParamsInterface = {};
+
+    const cood = {
+      origin: {
+        lat: coordinateParams.get('rl'),
+        lng: coordinateParams.get('rln')
+      },
+      destination: {
+        lat: coordinateParams.get('dl'),
+        lng: coordinateParams.get('dln')
+      },
+      current: {
+        lat: coordinateParams.get('cl'),
+        lng: coordinateParams.get('cln')
+      }
+    };
+
+    if (cood.current.lat && cood.current.lng) res.current = { lat: +cood.current.lat, lng: +cood.current.lng };
+
+    if (cood.origin.lat && cood.origin.lng) res.origin = { lat: +cood.origin.lat, lng: +cood.origin.lng };
+
+    if (cood.destination.lat && cood.destination.lng) res.destination = { lat: +cood.destination.lat, lng: +cood.destination.lng };
+
+    return Object.keys(res).length ? res : undefined;
+  }, [coordinateParams]);
 
   const setCoordinateParameters = (type: 'origin' | 'destination' | 'current', coordinates: LatLng) => {
     coordinateParams.set(`${paramKeys[type]}${coordinateKeys.lng}`, coordinates.lng.toString());
@@ -34,32 +63,24 @@ export default function useLocationParams() {
   };
 
   const clearCoordinateParams = () => {
-    router.push(`${pathname}`);
-  };
+    const params = new URLSearchParams(searchParams.toString());
 
-  const getCoordinateParameters = (): LocationParamsInterface => {
-    const res: LocationParamsInterface = {};
-    const cood = {
-      origin: {
-        lat: coordinateParams.get(`${paramKeys.origin}${coordinateKeys.lat}`),
-        lng: coordinateParams.get(`${paramKeys.origin}${coordinateKeys.lng}`)
-      },
-      destination: {
-        lat: coordinateParams.get(`${paramKeys.destination}${coordinateKeys.lat}`),
-        lng: coordinateParams.get(`${paramKeys.destination}${coordinateKeys.lng}`)
-      },
-      current: {
-        lat: coordinateParams.get(`${paramKeys.current}${coordinateKeys.lat}`),
-        lng: coordinateParams.get(`${paramKeys.current}${coordinateKeys.lng}`)
-      }
-    };
+    // origin
+    params.delete(`${paramKeys['origin']}${coordinateKeys.lng}`);
+    params.delete(`${paramKeys['origin']}${coordinateKeys.lat}`);
 
-    // Get Origin
-    if (cood.current.lat && cood.current.lng) res.current = { lat: Number(cood.current.lat), lng: Number(cood.current.lng) };
-    if (cood.origin.lat && cood.origin.lng) res.origin = { lat: Number(cood.origin.lat), lng: Number(cood.origin.lng) };
-    if (cood.destination.lat && cood.destination.lng) res.destination = { lat: Number(cood.destination.lat), lng: Number(cood.destination.lng) };
+    // destination
+    params.delete(`${paramKeys['destination']}${coordinateKeys.lng}`);
+    params.delete(`${paramKeys['destination']}${coordinateKeys.lat}`);
 
-    return res;
+    // current
+    params.delete(`${paramKeys['current']}${coordinateKeys.lng}`);
+    params.delete(`${paramKeys['current']}${coordinateKeys.lat}`);
+
+    const query = params.toString();
+    const url = query ? `${pathname}?${query}` : pathname;
+
+    router.replace(url);
   };
 
   const getUrl = () => {
@@ -68,10 +89,9 @@ export default function useLocationParams() {
   };
 
   return {
-    coordinateParams,
+    locationParameters,
     getUrl,
     setCoordinateParameters,
-    clearCoordinateParams,
-    getCoordinateParameters
+    clearCoordinateParams
   };
 }

@@ -6,6 +6,7 @@ import AppLogoIcon from '@/app/components/icons/AppLogoIcon';
 import { useMediaQuery } from '@/app/hooks/useMediaQuery';
 
 import './component.scss';
+import { GORA_TOUR_STEP_SELECTOR } from '@/app/constants/tour';
 
 export type LocationOption = {
   label: string; // display name
@@ -59,7 +60,13 @@ export function FloatingRouteSearch({
     if (initialLocations) {
       if (initialLocations.origin) setOrigin(initialLocations.origin);
       if (initialLocations.destination) setDestination(initialLocations.destination);
+    } else {
+      // Clear up the inputs
+      setOrigin(undefined);
+      setDestination(undefined);
     }
+
+    console.log('initialLocations', initialLocations);
   }, [initialLocations]);
 
   useEffect(() => {
@@ -134,11 +141,13 @@ export function FloatingRouteSearch({
         </div>
         <div className={isMobile ? 'ml-auto mr-2' : ''}>
           <Button
+            id={GORA_TOUR_STEP_SELECTOR.FIRST}
             className="btn-blue"
             icon="pi pi-search"
             rounded
             label="Guide Me"
             severity="info"
+            tooltip="Begin planning your route with GORA."
             aria-label="User"
             onClick={() => setIsSearchBoxVisible(!isSearchBoxVisible)}
           />
@@ -152,7 +161,7 @@ export function FloatingRouteSearch({
           </h5>
           <div className="flex flex-column gap-2">
             <div className="flex flex-column gap-1">
-              <div className="flex flex-row align-items-center gap-1">
+              <div className="flex flex-row align-items-center gap-1" id={GORA_TOUR_STEP_SELECTOR.SECOND}>
                 <AutoComplete
                   value={origin ?? originQuery}
                   suggestions={originSuggestions}
@@ -174,12 +183,20 @@ export function FloatingRouteSearch({
                   className="w-full"
                   inputClassName="w-full"
                 />
-                <Button onClick={() => onSelectMap?.('origin')} className="btn-blue" size="small" outlined icon="pi pi-map-marker" />
+                <Button
+                  onClick={() => onSelectMap?.('origin')}
+                  tooltip="Click and tap on the map to select a location."
+                  tooltipOptions={{ position: 'right' }}
+                  className="btn-blue"
+                  size="small"
+                  outlined
+                  icon="pi pi-map-marker"
+                />
               </div>
             </div>
 
             <div className="flex flex-column gap-1">
-              <div className="flex flex-row align-items-center gap-1">
+              <div className="flex flex-row align-items-center gap-1" id={GORA_TOUR_STEP_SELECTOR.THIRD}>
                 <AutoComplete
                   value={destination ?? destQuery}
                   suggestions={destSuggestions}
@@ -200,7 +217,15 @@ export function FloatingRouteSearch({
                   className="w-full"
                   inputClassName="w-full"
                 />
-                <Button onClick={() => onSelectMap?.('destination')} className="btn-blue" outlined size="small" icon="pi pi-map-marker" />
+                <Button
+                  onClick={() => onSelectMap?.('destination')}
+                  tooltip="Click and tap on the map to select a location."
+                  tooltipOptions={{ position: 'right' }}
+                  className="btn-blue"
+                  outlined
+                  size="small"
+                  icon="pi pi-map-marker"
+                />
               </div>
             </div>
 
@@ -211,6 +236,8 @@ export function FloatingRouteSearch({
                 size="small"
                 icon="pi pi-directions"
                 disabled={!canSearch}
+                tooltip="Search Routes"
+                id={GORA_TOUR_STEP_SELECTOR.FOURTH}
                 onClick={() => onSearchRoute?.({ origin, destination })}
                 type="button"
                 className="btn-blue"
@@ -222,6 +249,7 @@ export function FloatingRouteSearch({
                 rounded
                 icon="pi pi-times"
                 severity="contrast"
+                tooltip="Clear Search"
                 title="Clear Search"
                 outlined
                 onClick={clearAll}
