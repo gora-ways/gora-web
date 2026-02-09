@@ -14,14 +14,14 @@ interface TourControllerProps {
 export function TourController({ onStartClick, start }: TourControllerProps) {
   const { startNextStep, currentTour } = useNextStep();
 
-  const handleStartTour = useCallback(() => {
+  const handleStartTour = () => {
     startNextStep(GORA_TOUR_NAME);
     onStartClick?.();
-  }, [startNextStep, onStartClick]);
+  };
 
   useEffect(() => {
     if (start) handleStartTour();
-  }, [start, handleStartTour]);
+  }, [start]);
 
   return (
     <div className="tour-controller">

@@ -29,6 +29,7 @@ const HomePage = () => {
     zoomTo,
     fixLocation,
     toast,
+    autoStartTour,
     setZoomTo,
     chooseDirection,
     clearSearch,
@@ -67,7 +68,7 @@ const HomePage = () => {
         )}
 
         {/* Tour Guide */}
-        {(routes.length <= 0 || isMobile) && <TourController onStartClick={onTourStart} onStopClick={onTourStop} />}
+        {(routes.length <= 0 || isMobile) && <TourController start={autoStartTour} onStartClick={onTourStart} onStopClick={onTourStop} />}
 
         {/* Sticky alert message */}
         {chooseOnMap && <FloatAlertDirectionChooser type={chooseOnMap} />}

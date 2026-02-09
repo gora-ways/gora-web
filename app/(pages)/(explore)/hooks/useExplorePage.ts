@@ -26,7 +26,7 @@ export const useExplorePage = () => {
 
   const { setCoordinateParameters, clearCoordinateParams, locationParameters, getUrl } = useLocationParams();
 
-  const { tourCoordinates, tourStarted, setTourStarted } = useTour();
+  const { tourCoordinates, tourStarted, setTourStarted, autoStartTour } = useTour();
 
   // Initial locations
   const [originCoordinates, setOriginCoordinates] = useState<LatLng | undefined>();
@@ -230,6 +230,7 @@ export const useExplorePage = () => {
     manualInitLocations,
     onTourStart,
     onTourStop,
+    autoStartTour,
     fixLocation,
     toast,
     zoomTo,

@@ -29,7 +29,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.FIRST}`,
         side: 'top',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -38,13 +38,14 @@ export const GORA_TOURS: Tour[] = [
         title: 'Set Your Origin',
         content: (
           <>
-            <strong>Search for your origin</strong> or <strong>simply pin / click a location on the map</strong> to mark where you&apos;re starting from.
+            <strong>Search for your origin</strong> or <strong>simply pin / click a location on the map</strong> to mark where you&apos;re starting
+            from.
           </>
         ),
         selector: `#${GORA_TOUR_STEP_SELECTOR.SECOND}`,
         side: 'top',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -55,7 +56,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.THIRD}`,
         side: 'top',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -66,7 +67,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.FOURTH}`,
         side: 'top',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -77,7 +78,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.FIFTH}`,
         side: 'bottom',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -89,7 +90,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.SIXTH}`,
         side: 'top',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -101,7 +102,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.SEVENTH}`,
         side: 'top-right',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -113,7 +114,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.EIGHT}`,
         side: 'top-right',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -125,7 +126,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.NINTH}`,
         side: 'top-right',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       },
@@ -136,7 +137,7 @@ export const GORA_TOURS: Tour[] = [
         selector: `#${GORA_TOUR_STEP_SELECTOR.TENTH}`,
         side: 'top-right',
         showControls: true,
-
+        showSkip: true,
         pointerPadding: 10,
         pointerRadius: 10
       }
